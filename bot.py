@@ -12,13 +12,14 @@ bot = commands.Bot('py ', description='Created by A\u200bva#4982', help_command=
 class StdoutProxy:
     def __init__(self):
         self.var = contextvars.ContextVar('stdout')
+        self.original = sys.stdout
 
     def write(self, *args, **kwargs):
-        out = self.var.get(sys.stdout)
+        out = self.var.get(self.original)
         out.write(*args, **kwargs)
 
     def __getattr__(self, item):
-        return getattr(self.var.get(sys.stdout), item)
+        return getattr(self.var.get(self.original), item)
 
     def set(self, val):
         self.var.set(val)
