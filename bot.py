@@ -184,8 +184,19 @@ class Eval(commands.Cog):
         # do .body[0] to get the actual `async def`, since everything is wrapped in an `ast.Module`
         async_func = base_tree.body[0]
 
-        # create the AST tree for the code we want to execute
-        code = ast.parse(code)
+        try:
+            # create the AST tree for the code we want to execute
+            code = ast.parse(code)
+        except SyntaxError:
+            # oops the user did something silly, we should let them know.
+            await ctx.message.add_reaction(':warning:572102707331203075')
+            embed = discord.Embed(colour=discord.Colour.red())
+            embed.add_field(
+                name='**Traceback**',
+                value=f'```{traceback.format_exc(limit=2)}```'
+            )
+            return await ctx.send(embed=embed)
+
         # put all the executable code into the body of the base function after the `yield ...` line
         async_func.body.extend(code.body)
 
