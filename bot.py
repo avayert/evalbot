@@ -161,6 +161,7 @@ class Eval(commands.Cog):
             'server': ctx.guild,
             'author': ctx.author,
             'channel': ctx.channel,
+            'message': ctx.message
         }
         # imports and other global variables
         globals_.update(globals())
