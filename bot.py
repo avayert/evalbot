@@ -270,7 +270,7 @@ class Eval(commands.Cog):
         if stdout:
             embed.add_field(
                 name='**stdout**',
-                value=f'```{stdout}```'
+                value=f'```\n{stdout}```'
             )
 
         if exception:
