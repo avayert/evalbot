@@ -1,6 +1,7 @@
 import ast
 import contextlib
 import contextvars
+import functools
 import pathlib
 import sys
 import textwrap
@@ -11,6 +12,8 @@ import discord
 from discord.ext import commands
 
 bot = commands.Bot('py ', description='Created by A\u200bva#4982', help_command=commands.MinimalHelpCommand())
+
+truncate = functools.partial(textwrap.shorten, width=1000)
 
 
 @contextlib.asynccontextmanager
@@ -194,7 +197,7 @@ class Eval(commands.Cog):
             embed = discord.Embed(colour=discord.Colour.red())
             embed.add_field(
                 name='**Traceback**',
-                value=f'```{traceback.format_exc(limit=2)}```'
+                value=f'```{truncate(traceback.format_exc(limit=2))}```'
             )
             return await ctx.send(embed=embed)
 
@@ -263,14 +266,14 @@ class Eval(commands.Cog):
             plural = len(results) > 1
             embed.add_field(
                 name=f'**Result{"s" * plural}:**',
-                value='```py\n' + textwrap.indent('\n'.join(results), ' \N{BULLET OPERATOR} ') + '```'
+                value='```py\n' + truncate(textwrap.indent('\n'.join(results), ' \N{BULLET OPERATOR} ')) + '```'
             )
 
         stdout = _stdout.get()
         if stdout:
             embed.add_field(
                 name='**stdout**',
-                value=f'```\n{stdout}```'
+                value=f'```\n{truncate(stdout)}```'
             )
 
         if exception:
@@ -278,7 +281,7 @@ class Eval(commands.Cog):
             embed.colour = discord.Colour.red()
             embed.add_field(
                 name='**Traceback**',
-                value=f'```{exception}```'
+                value=f'```{truncate(exception)}```'
             )
         else:
             embed.colour = discord.Colour.green()
